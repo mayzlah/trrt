@@ -21,17 +21,45 @@ public class BCTParser {
     
     }
     
-    private void torParser() {
-                
+    private int whatIs(int index) {
+        switch (metaInfo.charAt(index)) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                return 0; break; //String
+            case 'i':
+                return 1; break; //Integer
+            case 'l':
+                return 2; break; //List
+            case 'd':
+                return 3; break; //Dictionary
+            default:
+                return -1; break; //Wrong element
+        }
+    }
+    
+    private int whereEnds(int index) {
+    
+    }
+    
+    private void toParse(int index) {
+        
     }
     private void parseDict() {
     
     }
     
-    private void parseList() {
-    
+    private String[] parseList(int index) {
+        
     }
-    private void parseNumber() {
+    private int parseNumber() {
     
     }
     
@@ -77,14 +105,25 @@ public class BCTParser {
         int index = metaInfo.indexOf("announce");
         if(index<0)
         {
-            System.err.println("File doesn't contents such information");
+            System.err.println("File doesn't contents such information: announce");
             return null;
         }
-        return parseString(index + 8);    
+        return parseString(index + "announce".length());    
+    }
+    
+    public String[][] getURLList() {
+        int index = metaInfo.indexOf("announce-list");
+        int counter;
+        if(index<0)
+        {
+            System.err.println("File doesn't contents such information: announce-list");
+            return null;
+        }
+        return parse
     }
     
     private String metaInfo;    
-    private String announceURL;
+    //private String announceURL;
     private String info;
     private int crDate;
     private String comment;

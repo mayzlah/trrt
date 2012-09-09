@@ -371,12 +371,11 @@ public class BDecoder
             BEValue info = (BEValue)(result.getMap().get("info"));
             BEValue announce = (BEValue)(result.getMap().get("announce"));
             BEValue name = (BEValue)(info.getMap().get("name"));
-            System.out.println(announce.getString());
+            System.out.println(result);
         }
         catch(IOException e)
         {
             System.out.println("No such file");
         }
     }
-
 }

@@ -25,7 +25,7 @@ public class Torrent
             torrent.put("pieces", (byte[])((BEValue)info.getMap().get("pieces")).getBytes());
             torrent.put("info_hash", t.get_special_map_digest());
 
-            // convertation byte array to string LOOK LIKE SHIT - REWRITE
+            // convertation byte array to string LOOKS LIKE SHIT - REWRITE
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PrintStream ps = new PrintStream(baos);
             for(byte b : (byte[])torrent.get("info_hash") ) {
@@ -44,7 +44,7 @@ public class Torrent
             System.out.println(encoded_info_hash);
 
             String announce_url = torrent.get("announce") + "&info_hash=" + encoded_info_hash
-                + "&peer_id=-BD0300-121234567890&port=6885&uploaded=0&downloaded=0&left=" + torrent.get("length") + "&event=started&numwant=10";
+                + "&peer_id=-SH0001-121234567890&port=6885&uploaded=0&downloaded=0&left=" + torrent.get("length") + "&event=started&numwant=10";
 
             URL url = new URL(announce_url);
             System.out.println(announce_url);
@@ -67,14 +67,6 @@ public class Torrent
         }
         catch(IOException e) {
             System.out.println("Shit shit SHIIIIT!");
-        }
-        try
-        {
-            
-        }
-        catch(InvalidBEncodingException e)
-        {
-            System.out.println("another shit");
         }
     }
 

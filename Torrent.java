@@ -4,7 +4,7 @@ import java.util.*;
 import java.math.BigInteger;
 import java.nio.*;
 
-public class Torrent implements Runnable
+public class Torrent
 {
     public Torrent(String fileName) {
         //parse bdecoder info
@@ -70,7 +70,7 @@ public class Torrent implements Runnable
             else {
                 parseDictPeers((BEValue)result.getMap().get("peers"));
             }
-
+            this.start();
         }
         catch(IOException e) {
             System.out.println("Shit happens =(");
@@ -105,7 +105,8 @@ public class Torrent implements Runnable
         return i;
     }
 
-    public void run() {
+    private void start() {
+        
     }
 
     private void stop() {

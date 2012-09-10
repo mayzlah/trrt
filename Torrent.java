@@ -22,7 +22,7 @@ public class Torrent
             BEValue info = (BEValue)(result.getMap().get("info"));
             this.name = ((BEValue)info.getMap().get("name")).getString();
             this.length = ((BEValue)info.getMap().get("length")).getInt();
-            this.piece_length = ((BEValue)info.getMap().get("piece length")).getInt();
+            this.pieceLength = ((BEValue)info.getMap().get("piece length")).getInt();
             this.pieces = (byte[])((BEValue)info.getMap().get("pieces")).getBytes();
             this.info_hash = t.get_special_map_digest();
 
@@ -45,7 +45,7 @@ public class Torrent
             System.out.println(encoded_info_hash);
 
             String announce_url = this.announce + "&info_hash=" + encoded_info_hash
-                + "&peer_id=-SH0001-121234567890&port=5000&uploaded=0&downloaded=0&left=" + this.length + "&event=started&numwant=10";
+                + "&peer_id=-SH0001-121234567890&port=" + PORT + "&uploaded=0&downloaded=0&left=" + this.length + "&event=started&numwant=10";
 
             URL url = new URL(announce_url);
             System.out.println(announce_url);
@@ -77,6 +77,26 @@ public class Torrent
         }
     }
 
+    public byte[] getFlags() {
+        return flags;
+    }
+
+    public void setFlag(int index, byte value) {
+        flags[index] = value;
+    }
+
+    public byte[] getPieceHash(int index) {
+        return Arrays.copyOfRange(this.pieces, index * 20, index * 20 + 20);
+    }
+
+    public byte[] getInfoHash() {
+        return this.info_hash;
+    }
+
+    public static void main(String[] args) {
+        Torrent torrent = new Torrent("a.torrent");
+    }
+
     private void parseBinaryPeers(byte[] peers) throws UnknownHostException {
         System.out.println("List of peers\n===============================================================================================");
         this.peers = new ArrayList<Peer>(peers.length/6);
@@ -91,6 +111,7 @@ public class Torrent
             port = parsePort(hb, lb);
             this.peers.add(new Peer(ip, port));
         }
+        flags = new byte[this.pieces.length / 20 + (this.pieces.length % 20 == 0 ? 0 : 1)];
     }
 
     private void parseDictPeers(BEValue peers) {
@@ -106,21 +127,30 @@ public class Torrent
     }
 
     private void start() {
-        
+        System.out.println("In start: peers length:" + this.peers.size());
+        int i = 0;
+        for(Peer peer : peers) {
+            if(i > 1) { break; } // ten test peers - sure quite enough
+            PeerDownloader p = new PeerDownloader(peer, this);
+            downloaders.add(p);
+            Thread t = new Thread(p);
+            t.start();
+            i++;
+        }
     }
 
     private void stop() {
     }
 
-    public static void main(String[] args) {
-        Torrent torrent = new Torrent("a.torrent");
-    }
+    public static final int PORT = 7600;
 
-    String announce;
-    String name;
-    int length;
-    int piece_length;
-    byte[] pieces; 
-    byte[] info_hash;
-    ArrayList<Peer> peers;
+    private String announce;
+    private String name;
+    private int length;
+    private int pieceLength;
+    private byte[] pieces; 
+    private byte[] info_hash;
+    private byte[] flags; // array of flags of each piece state: 0 - not downloaded, 1 - in progress, 2 - downloaded
+    private ArrayList<Peer> peers;
+    private ArrayList<PeerDownloader> downloaders = new ArrayList<PeerDownloader>();
 }

@@ -129,14 +129,11 @@ public class Torrent
     private void start() {
         System.out.println("In start: peers length:" + this.peers.size());
         int i = 0;
-        for(Peer peer : peers) {
-            if(i > 1) { break; } // ten test peers - sure quite enough
-            PeerDownloader p = new PeerDownloader(peer, this);
-            downloaders.add(p);
-            Thread t = new Thread(p);
-            t.start();
-            i++;
-        }
+        Peer peer = peers.get(0);
+        
+        Runnable p = new PeerDownloader(peer, this);
+        downloaders.add( (PeerDownloader)p );
+        p.run();
     }
 
     private void stop() {

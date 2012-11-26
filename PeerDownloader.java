@@ -5,6 +5,7 @@ import java.util.*;
 
 public class PeerDownloader implements Runnable {
     public PeerDownloader(Peer peer, Torrent torrent) {
+        System.out.println("PeerDownloader for peer = " + peer);
         this.peer = peer;
         this.torrent = torrent;
         this.currentPieceIndex = -1;
@@ -13,7 +14,7 @@ public class PeerDownloader implements Runnable {
     public void run() {
         while(Arrays.asList(this.torrent.getFlags()).contains(0)) {
             // select piece to download via this connection
-            dataLock.lock();
+            //dataLock.lock();
             byte[] flags = this.torrent.getFlags();
             for(int i = 0; i < flags.length; i++) {
                 if(flags[i] == 0) {
@@ -21,7 +22,7 @@ public class PeerDownloader implements Runnable {
                     this.currentPieceIndex = i;
                 }
             }
-            dataLock.unlock();
+            //dataLock.unlock();
             connect();
             interested();
             request(this.currentPieceIndex, 0, Math.pow(2, 14));
@@ -64,7 +65,10 @@ public class PeerDownloader implements Runnable {
 
     }
 
-    private Lock dataLock = new ReentrantLock();
+    private void request(int currentPieceIndex, int a, double b) {
+    }
+
+    //private Lock dataLock = new ReentrantLock();
     private Peer peer;
     private Torrent torrent;
     private int currentPieceIndex;
